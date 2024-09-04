@@ -75,7 +75,3 @@ Ethereum Virtual Machine related examples and simulations:
    cd rpc/eth-balance
    go run main.go
    ```
-
-## License
-
-[//]: # ([])
