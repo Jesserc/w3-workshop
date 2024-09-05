@@ -51,8 +51,8 @@ func main() {
 
 	// Print transaction details
 	fmt.Printf("Transaction successful:\n")
-	fmt.Printf("  From: %s\n", addrFrom.Hex())
-	fmt.Printf("  To: %s\n", addrTo.Hex())
+	fmt.Printf("  From: %s\n", addrFrom)
+	fmt.Printf("  To: %s\n", addrTo)
 	fmt.Printf("  Value: %s ETH\n", value)
 	fmt.Printf("  Gas Used: %d\n", receipt.GasUsed)
 

@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/big"
+	"os"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/lmittmann/go-solc"
 	"github.com/lmittmann/w3"
 	"github.com/lmittmann/w3/w3types"
 	"github.com/lmittmann/w3/w3vm"
@@ -15,19 +15,24 @@ import (
 var (
 	funcStore    = w3.MustNewFunc("store(uint256)", "")
 	funcRetrieve = w3.MustNewFunc("retrieve()", "uint256")
+
+	// Solidity compiler
+	c = solc.New("0.8.25")
 )
 
-// Your contract bytecode (replace this with your actual bytecode)
-var contractBytecode = common.FromHex("608060405234801561001057600080fd5b50610150806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80632e64cec11461003b5780636057361d14610059575b600080fd5b610043610075565b60405161005091906100d9565b60405180910390f35b610073600480360381019061006e919061009d565b61007e565b005b60008054905090565b8060008190555050565b60008135905061009781610103565b92915050565b6000602082840312156100b3576100b26100fe565b5b60006100c184828501610088565b91505092915050565b6100d3816100f4565b82525050565b60006020820190506100ee60008301846100ca565b92915050565b6000819050919050565b600080fd5b61010c816100f4565b811461011757600080fd5b5056fea2646970667358221220404e37f487a89a932dca5e77faaf6ca2de3b991f93d230604b1b8daaef64766264736f6c63430008090033")
-
 func main() {
+	// 0. Get contract bytecode
+	contract := c.MustCompile(".", "Store")
+	contractBytecode := contract.DeployCode
+
 	// 1. Set up a local VM environment
 	vm, err := w3vm.New(
 		w3vm.WithChainConfig(nil), // Use default chain config
 		w3vm.WithNoBaseFee(),      // Disable base fee for simplicity
 	)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Failed to create vm instance, err: %v\n", err)
+		os.Exit(1)
 	}
 
 	// 2. Deploy the contract
@@ -39,11 +44,12 @@ func main() {
 
 	receipt, err := vm.Apply(deployMsg)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Failed to deploy contract, err: %v\n", err)
+		os.Exit(1)
 	}
 
 	contractAddr := *receipt.ContractAddress
-	fmt.Printf("Contract deployed at: %s\n", contractAddr.Hex())
+	fmt.Printf("Contract deployed at: %s\n", contractAddr)
 
 	// 3. Interact with the deployed contract
 
@@ -57,7 +63,8 @@ func main() {
 
 	_, err = vm.Apply(storeMsg)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Failed to send store msg, err: %v\n", err)
+		os.Exit(1)
 	}
 
 	// Retrieve the value
@@ -69,20 +76,21 @@ func main() {
 
 	receipt, err = vm.Call(retrieveMsg)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Failed to send retrieve msg, err: %v\n", err)
+		os.Exit(1)
 	}
 
 	// 4. Verify the results
 	var storedValue *big.Int
 	if err := receipt.DecodeReturns(&storedValue); err != nil {
-		log.Fatal(err)
+		fmt.Printf("Failed to decode returned value, err: %v\n", err)
 	}
 
-	fmt.Printf("Stored value: %s\n", storedValue.String())
+	fmt.Printf("Stored value: %s\n", storedValue)
 
 	// Assert the value is correct
 	if storedValue.Cmp(big.NewInt(42)) != 0 {
-		log.Fatal("Unexpected stored value")
+		fmt.Printf("Returned value is not equal to expected value, err: %v\n", err)
 	}
 
 	fmt.Println("Test passed successfully!")

@@ -16,6 +16,6 @@ func main() {
 		"\n"+
 			"Address: %v\n"+
 			"Hash: %v\n"+
-			"Bytes (binary): %b\n"+
+			"Bytes: %v\n"+
 			"Amount in Wei: %v\n", addr, hash, bytes, amount)
 }

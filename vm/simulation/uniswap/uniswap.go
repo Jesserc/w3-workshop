@@ -8,7 +8,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/lmittmann/w3"
-	"github.com/lmittmann/w3/module/debug"
 	"github.com/lmittmann/w3/w3types"
 	"github.com/lmittmann/w3/w3vm"
 )
@@ -47,7 +46,7 @@ func main() {
 		return path
 	}
 
-	client := w3.MustDial("https://docs-demo.quiknode.pro/")
+	client := w3.MustDial("https://eth.public-rpc.com//")
 	defer client.Close()
 
 	// 1. Create a VM that forks the Mainnet state from the latest block,
@@ -91,22 +90,7 @@ func main() {
 
 	fmt.Printf("amount out: %s UNI\n", w3.FromWei(amountOut, 18))
 
-	// Print event from executing the tx
-	/*for _, lg := range receipt.Logs {
-		jsonBytes, err := lg.MarshalJSON()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		b := bytes.Buffer{}
-		err = json.Indent(&b, jsonBytes, "", "\t")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(&b)
-	}*/
-
-	// Trace
+	/*// Trace
 	config := &debug.TraceConfig{
 		EnableStack:   true,
 		EnableMemory:  true,
@@ -126,5 +110,5 @@ func main() {
 	fmt.Printf("Output: %x\n", trace.Output)
 	for i, structLog := range trace.StructLogs {
 		fmt.Printf("Step %d: Opcode %s, Gas: %d, Depth: %d\n", i, structLog.Op, structLog.Gas, structLog.Depth)
-	}
+	}*/
 }

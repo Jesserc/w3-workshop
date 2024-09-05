@@ -21,7 +21,7 @@ func main() {
 	defer client.Close()
 
 	// fetch blocks in bulk
-	block := new(types.Block)
+	var block *types.Block
 	call := eth.BlockByHash(blockHash).Returns(&block)
 
 	err := client.Call(call)
@@ -50,7 +50,12 @@ func processBlock(b *types.Block) {
 			fmt.Println("Error:", err)
 			return
 		}
-		fmt.Printf("Hash: %v, From: %v, To: %v\n", transaction.Hash(), sender, transaction.To())
-	}
 
+		fmt.Printf("-%v:\n", i+1)
+		fmt.Printf("Hash: %v\nFrom: %v\nTo: %v\nValue: %v ETH\n\n",
+			transaction.Hash(),
+			sender,
+			transaction.To(),
+			w3.FromWei(transaction.Value(), 18))
+	}
 }

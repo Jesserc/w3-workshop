@@ -36,13 +36,8 @@ func main() {
 
 	// Create hooks
 	hooks := &tracing.Hooks{
-		/*OnTxStart: func(vmCtx *tracing.VMContext, tx *types.Transaction, from common.Address) {
-			fmt.Println("Transaction started")
-			fmt.Printf("From: %s, To: %s, Value: %s\n", from.Hex(), tx.To().Hex(), tx.Value().String())
-			fmt.Println()
-		},*/
 		OnEnter: func(depth int, typ byte, from common.Address, to common.Address, input []byte, gas uint64, value *big.Int) {
-			fmt.Printf("Entering depth %d, from %s to %s, gas: %d, value: %s\n", depth, from.Hex(), to.Hex(), gas, value.String())
+			fmt.Printf("Entering depth %d, from %s to %s, gas: %d, value: %s\n", depth, from, to, gas, value)
 			fmt.Println()
 		},
 		OnExit: func(depth int, output []byte, gasUsed uint64, err error, reverted bool) {
@@ -62,15 +57,11 @@ func main() {
 			fmt.Println()
 		},
 		OnBalanceChange: func(addr common.Address, prev, new *big.Int, reason tracing.BalanceChangeReason) {
-			fmt.Printf("Balance changed for %s from %s to %s, reason: %v\n", addr.Hex(), prev.String(), new.String(), reason)
+			fmt.Printf("Balance changed for %s from %s to %s, reason: %v\n", addr, prev, new, reason)
 			fmt.Println()
 		},
 	}
-	/*tracer := tracers.Tracer{
-		Hooks:     hooks,
-		GetResult: nil,
-		Stop:      nil,
-	}*/
+
 	// Apply the message with hooks
 	receipt, err := vmInstance.Apply(msg, hooks)
 	if err != nil {

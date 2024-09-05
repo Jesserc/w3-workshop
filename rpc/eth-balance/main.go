@@ -15,11 +15,7 @@ func main() {
 	defer client.Close()
 
 	var balance *big.Int
-	// balance method returns RPCCallerFactory which is the interface that wraps the basic Returns method
-	// the returns method returns a rpc caller which is needed for client.call(), as shown below
-	call := w3eth.Balance(w3.A("0x6058A1cDdeC5873c0b116b8F0A528bCb6aBc05dA"), nil).Returns(&balance)
-
-	err := client.Call(call)
+	err := client.Call(w3eth.Balance(w3.A("0x6058A1cDdeC5873c0b116b8F0A528bCb6aBc05dA"), nil).Returns(&balance))
 	if err != nil {
 		fmt.Println(err)
 		return
